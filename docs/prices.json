@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-19T17:31:41.174Z",
+  "updated": "2026-07-19T18:54:38.743Z",
   "status": {
     "metals": "ok",
     "fx": "ok",
@@ -7,7 +7,7 @@
     "islamicly_gold": "failed: page.goto: Timeout 45000ms exceeded.",
     "islamicly_silver": "failed: page.goto: Timeout 45000ms exceeded.",
     "daralsabaek_gold": "ok (+1.2% vs spot-implied)",
-    "daralsabaek_silver": "failed: page.waitForFunction: Timeout 30000ms exceeded."
+    "daralsabaek_silver": "failed: page.goto: Timeout 45000ms exceeded."
   },
   "usAu": 4019.300049,
   "usAg": 56.080002,
