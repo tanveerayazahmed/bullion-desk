@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bullion Desk</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--card:#151b24;--chip:#1c242f;--line:#252d38;--txt:#e6e9ef;--dim:#7d8797;
+  --gold:#e3b341;--goldbg:#2a1d10;--goldln:#5a4218;
+  --silver:#a8b3bd;--silverbg:#161d26;--silverln:#3a4450;
+  --oil:#7ba05b;--oilbg:#15200f;--oilln:#33471f;
+  --up:#3fb950;--down:#f0533f;--warn:#d29922;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,sans-serif;font-size:13px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1000px;margin:0 auto;padding:16px 14px 40px}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+h1{font-size:15px;font-weight:700;margin:0}
+.stamp{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim)}
+h2{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:18px 0 8px}
+
+#src{display:flex;flex-wrap:wrap;gap:6px}
+#src span{font-family:'IBM Plex Mono',monospace;font-size:9.5px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
+#src span.ok{color:var(--up);border-color:#1d3d24}
+#src span.no{color:var(--warn);border-color:#4a3a10}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.mc{background:var(--card);border:1px solid var(--ln,var(--line));border-radius:10px;padding:13px 14px;
+    background-image:linear-gradient(160deg,var(--bgtint,transparent) 0%,transparent 55%)}
+.mc.g{--ln:var(--goldln);--bgtint:var(--goldbg);--ac:var(--gold)}
+.mc.s{--ln:var(--silverln);--bgtint:var(--silverbg);--ac:var(--silver)}
+.mc.o{--ln:var(--oilln);--bgtint:var(--oilbg);--ac:var(--oil)}
+.mh{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mname{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600}
+.dot{width:18px;height:18px;border-radius:50%;background:var(--ac);opacity:.85;flex:none}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.09em;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
+.badge.live{background:var(--ac);color:#0d1117;border-color:var(--ac)}
+.badge.man{color:var(--warn);border-color:#4a3a10}
+.sub{font-size:11px;color:var(--dim);margin:3px 0 10px}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.chip{background:var(--chip);border-radius:7px;padding:7px 8px;position:relative}
+.chip .l{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.chip .v{font-family:'IBM Plex Mono',monospace;font-size:13.5px;font-weight:600;margin-top:3px;color:var(--ac);white-space:nowrap}
+.chip .p{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.06em;margin-top:3px;color:var(--dim)}
+.chip .p.scr{color:var(--up)}
+.chip .p.der{color:var(--warn)}
+.trend{margin-top:10px;background:var(--chip);border-radius:7px;padding:8px 9px 5px}
+.trend .th{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.trend .l{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.trend .c{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600}
+svg.sp{display:block;width:100%;height:30px;margin-top:4px}
+.nohist{font-size:10px;color:var(--dim);padding:9px 0 6px;line-height:1.4}
+.up{color:var(--up)}.down{color:var(--down)}
+
+.pane{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+table{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:12.5px}
+th{font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:500;text-align:right;padding:0 7px 7px;border-bottom:1px solid var(--line)}
+th:first-child{text-align:left}
+td{text-align:right;padding:8px 7px;border-bottom:1px solid rgba(37,45,56,.7);white-space:nowrap}
+td:first-child{text-align:left;font-family:Inter,sans-serif;font-weight:500}
+tbody tr:last-child td{border-bottom:none}
+.tag{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);border:1px solid var(--line);border-radius:4px;padding:1px 5px;margin-left:5px}
+.mini{font-size:10px;color:var(--dim)}
+.foot td{border-top:1px solid var(--line);border-bottom:none;font-weight:600;padding-top:9px}
+.del{background:none;border:none;color:#39414d;cursor:pointer;font-size:14px;padding:0 2px}
+.del:hover{color:var(--down)}
+.empty{padding:14px;text-align:center;color:var(--dim);font-size:12px}
+
+.f{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:9px;align-items:end}
+label{display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+input,select{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--txt);padding:7px 8px;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:12.5px}
+input:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px}
+button.b{background:var(--gold);color:#0d1117;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+button.b.g{background:none;border:1px solid var(--line);color:var(--dim)}
+button:focus-visible{outline:2px solid var(--txt);outline-offset:2px}
+.note{font-size:10.5px;color:var(--dim);margin:8px 0 0;line-height:1.55}
+details summary{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);cursor:pointer;padding:5px 0;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary:before{content:"+ ";color:var(--gold)}
+details[open] summary:before{content:"− "}
+#diag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);line-height:1.7}
+#diag b{color:var(--txt);font-weight:500}
+@media (max-width:820px){.cards{grid-template-columns:1fr}table{font-size:11.5px}td,th{padding-left:5px;padding-right:5px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Bullion Desk</h1>
+  <div style="display:flex;gap:8px;align-items:center">
+    <span class="stamp" id="stamp">loading…</span>
+    <button class="b g" id="refresh">Refresh</button>
+  </div>
+</header>
+<div id="src"></div>
+
+<div class="cards" id="cards"></div>
+
+<h2>Holdings</h2>
+<div class="pane">
+  <table>
+    <thead><tr><th>Position</th><th>Grams</th><th>Avg</th><th>Cost</th><th>Value</th><th>P&amp;L</th><th></th></tr></thead>
+    <tbody id="hold"></tbody>
+    <tfoot id="foot"></tfoot>
+  </table>
+  <div class="empty" id="empty" hidden>No holdings.</div>
+</div>
+
+<h2>Add position</h2>
+<div class="pane">
+  <div class="f">
+    <div><label for="fMetal">Metal</label><select id="fMetal"><option value="gold">Gold</option><option value="silver">Silver</option></select></div>
+    <div><label for="fMarket">Market</label><select id="fMarket"><option value="IN">India</option><option value="KW">Kuwait</option></select></div>
+    <div><label for="fQty">Grams</label><input id="fQty" type="number" step="0.0001"></div>
+    <div><label for="fMode">Cost as</label><select id="fMode"><option value="per">Per gram</option><option value="total">Total</option></select></div>
+    <div><label for="fCost">Amount</label><input id="fCost" type="number" step="0.0001"></div>
+    <div><button class="b" id="add">Add</button></div>
+  </div>
+</div>
+
+<details>
+  <summary>Fallback calibration</summary>
+  <div class="pane" style="margin-top:7px">
+    <p class="note" style="margin:0 0 10px">
+      Used only when a scrape fails. Enter what your apps show; the ratio against live spot is stored and
+      applied if Islamicly or Dar Al Sabaek can't be read. When scraping works, these are ignored.
+    </p>
+    <div class="f">
+      <div><label for="kAu">Gold KD/g</label><input id="kAu" type="number" step="0.001"></div>
+      <div><label for="iAu">Gold ₹/g</label><input id="iAu" type="number" step="0.01"></div>
+      <div><label for="kAg">Silver KD/g</label><input id="kAg" type="number" step="0.000001"></div>
+      <div><label for="iAg">Silver ₹/g</label><input id="iAg" type="number" step="0.01"></div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="b" id="cal">Save fallback</button>
+      <button class="b g" id="reset">Reset holdings</button>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>Source diagnostics</summary>
+  <div class="pane" style="margin-top:7px"><div id="diag">—</div></div>
+</details>
+
+<p class="note" id="disclosure"></p>
+
+</div>
+
+<script>
+const OZ=31.1034768;
+const FEED='./prices.json', HISTF='./history.json';
+
+let S={};
+let C=JSON.parse(localStorage.getItem('bd_coef')||'null')||{kAu:null,iAu:null,kAg:null,iAg:null};
+let holdings=JSON.parse(localStorage.getItem('bd_hold')||'null')||[
+  {metal:'gold',market:'IN',qty:6.4359,perGram:15745},
+  {metal:'gold',market:'KW',qty:5,perGram:258.021/5},
+  {metal:'silver',market:'IN',qty:110,perGram:285}];
+let HIST=[];
+
+const DEC={KW:3,IN:2},SYM={KW:'KD',IN:'₹'};
+const n=(v,d)=>v==null?'—':v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const money=(v,m)=>(v<0?'-':'')+SYM[m]+' '+n(Math.abs(v),DEC[m]);
+const saveLocal=()=>{localStorage.setItem('bd_hold',JSON.stringify(holdings));localStorage.setItem('bd_coef',JSON.stringify(C));};
+
+// spot converted to local currency per gram — the reference and the fallback base
+function base(metal,mkt){
+  const oz=metal==='gold'?S.usAu:S.usAg, fx=mkt==='KW'?S.usdKwd:S.usdInr;
+  if(oz==null||fx==null)return null;
+  return (oz/OZ)*fx;
+}
+
+// Resolve a local price: prefer the scraped value, fall back to coefficient.
+// Returns {v, src} where src is 'scraped' | 'derived' | null.
+function localPx(metal,mkt){
+  const key = metal==='gold' ? (mkt==='KW'?'kwAu':'inAu') : (mkt==='KW'?'kwAg':'inAg');
+  if(S[key]!=null) return {v:S[key], src:'scraped'};
+  const b=base(metal,mkt); if(b==null) return {v:null,src:null};
+  const ck = metal==='gold' ? (mkt==='KW'?'kAu':'iAu') : (mkt==='KW'?'kAg':'iAg');
+  if(C[ck]==null) return {v:null,src:null};
+  return {v:b*C[ck], src:'derived'};
+}
+
+function spark(v,c){
+  if(v.length<2)return null;
+  const w=300,h=30,mn=Math.min(...v),mx=Math.max(...v),r=(mx-mn)||1;
+  const line=v.map((y,i)=>(i/(v.length-1)*w).toFixed(1)+','+(h-2-((y-mn)/r)*(h-5)).toFixed(1)).join(' ');
+  const id='g'+Math.random().toString(36).slice(2,7);
+  return `<svg class="sp" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
+   <defs><linearGradient id="${id}" x1="0" x2="0" y1="0" y2="1">
+   <stop offset="0%" stop-color="${c}" stop-opacity=".28"/><stop offset="100%" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>
+   <polygon points="0,${h} ${line} ${w},${h}" fill="url(#${id})"/>
+   <polyline points="${line}" fill="none" stroke="${c}" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>`;
+}
+
+const PROV={scraped:'scraped',derived:'derived',null:'no data'};
+function chip(l,v,src){
+  const cls = src==='scraped'?'scr':(src==='derived'?'der':'');
+  const lab = src?PROV[src]:'no data';
+  return `<div class="chip"><div class="l">${l}</div><div class="v">${v}</div><div class="p ${cls}">${lab}</div></div>`;
+}
+
+function card(cls,name,sub,chips,key,color,live){
+  const v=HIST.map(r=>r[key]).filter(x=>x!=null), sp=spark(v,color);
+  let head='',body;
+  if(sp){const ch=((v[v.length-1]-v[0])/v[0])*100,d=ch>=0?'up':'down';
+    head=`<span class="c ${d}">${ch>=0?'+':''}${ch.toFixed(2)}%</span>`; body=sp;}
+  else body=`<div class="nohist">History builds as the job records each day.</div>`;
+  return `<div class="mc ${cls}"><div class="mh">
+    <div class="mname"><span class="dot"></span>${name}</div>
+    <span class="badge ${live?'live':'man'}">${live?'LIVE':'STALE'}</span></div>
+    <div class="sub">${sub}</div><div class="chips">${chips}</div>
+    <div class="trend"><div class="th"><span class="l">${v.length} day${v.length===1?'':'s'} recorded</span>${head}</div>${body}</div></div>`;
+}
+
+function renderTop(){
+  const st=S.status||{};
+  const ok=k=>st[k]!=null && String(st[k]).startsWith('ok');
+
+  const inAu=localPx('gold','IN'), kwAu=localPx('gold','KW');
+  const inAg=localPx('silver','IN'), kwAg=localPx('silver','KW');
+
+  cards.innerHTML=
+    card('g','Gold','24K 999.9',
+      chip('Global $/oz',S.usAu==null?'—':'$'+n(S.usAu,2),S.usAu==null?null:'scraped')+
+      chip('India ₹/g',inAu.v==null?'—':'₹'+n(inAu.v,2),inAu.src)+
+      chip('Kuwait KD/g',n(kwAu.v,3),kwAu.src),
+      'usAu','#e3b341',ok('metals'))+
+    card('s','Silver','999.9 fine',
+      chip('Global $/oz',S.usAg==null?'—':'$'+n(S.usAg,2),S.usAg==null?null:'scraped')+
+      chip('India ₹/g',inAg.v==null?'—':'₹'+n(inAg.v,2),inAg.src)+
+      chip('Kuwait KD/g',n(kwAg.v,4),kwAg.src),
+      'usAg','#a8b3bd',ok('metals'))+
+    card('o','Crude Oil','Brent · ICE front month',
+      chip('Brent $/bbl',S.oil==null?'—':'$'+n(S.oil,2),S.oil==null?null:'scraped')+
+      chip('Au : Oil',(S.usAu&&S.oil)?n(S.usAu/S.oil,1):'—',null)+
+      chip('Au : Ag',(S.usAu&&S.usAg)?n(S.usAu/S.usAg,1):'—',null),
+      'oil','#7ba05b',ok('brent'));
+
+  const pill=(lab,good)=>`<span class="${good?'ok':'no'}">${lab}</span>`;
+  document.getElementById('src').innerHTML=[
+    pill('Spot '+(ok('metals')?'live':'failed'),ok('metals')),
+    pill('FX '+(ok('fx')?'live':'failed'),ok('fx')),
+    pill('Brent '+(ok('brent')?'live':'failed'),ok('brent')),
+    pill('Islamicly '+(ok('islamicly_gold')?'scraped':'unavailable'),ok('islamicly_gold')),
+    pill('Dar Al Sabaek '+(ok('daralsabaek_gold')?'scraped':'unavailable'),ok('daralsabaek_gold')),
+  ].join('');
+
+  stamp.textContent = S.updated
+    ? 'Feed '+new Date(S.updated).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})
+    : 'no feed';
+
+  const rows=Object.entries(st).map(([k,v])=>`<b>${k}</b> — ${v}`);
+  if(S.usdInr) rows.push(`<b>USD→INR</b> — ${n(S.usdInr,3)}`);
+  if(S.usdKwd) rows.push(`<b>USD→KWD</b> — ${n(S.usdKwd,4)}`);
+  diag.innerHTML=rows.length?rows.join('<br>'):'No feed loaded.';
+
+  disclosure.textContent='A GitHub Action fetches spot, FX and Brent from JSON APIs, then opens Islamicly and '+
+    'Dar Al Sabaek in a headless browser to read their displayed rates. Every scraped figure is checked against '+
+    'the spot-implied price and rejected if implausible, so a broken scraper shows "no data" rather than a wrong '+
+    'number. Chips are labelled scraped or derived so you always know which you are looking at. Charts plot only '+
+    'days actually recorded.';
+}
+
+function spotFor(h){ return localPx(h.metal,h.market).v; }
+
+function renderHold(){
+  empty.hidden=holdings.length>0;
+  hold.innerHTML=holdings.map((h,i)=>{
+    const inv=h.qty*h.perGram, sp=spotFor(h), now=sp==null?null:h.qty*sp;
+    const pl=now==null?null:now-inv, pct=(pl==null||!inv)?null:pl/inv*100, c=pl==null?'':(pl>=0?'up':'down');
+    return `<tr><td>${h.metal==='gold'?'Gold':'Silver'}<span class="tag">${h.market==='KW'?'KWT':'IND'}</span></td>
+      <td>${n(h.qty,4)}</td><td>${n(h.perGram,DEC[h.market])}</td><td>${money(inv,h.market)}</td>
+      <td>${now==null?'—':money(now,h.market)}</td>
+      <td class="${c}">${pl==null?'—':(pl>=0?'+':'')+n(pct,1)+'%<br><span class="mini '+c+'">'+(pl>=0?'+':'')+money(pl,h.market)+'</span>'}</td>
+      <td><button class="del" data-i="${i}" aria-label="Remove">×</button></td></tr>`;
+  }).join('');
+  hold.querySelectorAll('.del').forEach(b=>b.onclick=()=>{holdings.splice(+b.dataset.i,1);saveLocal();renderHold();});
+
+  const bk={KW:{i:0,v:0},IN:{i:0,v:0}};let ok=true;
+  holdings.forEach(h=>{const sp=spotFor(h);if(sp==null){ok=false;return;}
+    bk[h.market].i+=h.qty*h.perGram;bk[h.market].v+=h.qty*sp;});
+  if(!ok||!holdings.length||!S.usdKwd||!S.usdInr){foot.innerHTML='';return;}
+  const fx=S.usdKwd/S.usdInr;
+  const ti=bk.KW.i+bk.IN.i*fx,tv=bk.KW.v+bk.IN.v*fx,pl=tv-ti,pct=ti?pl/ti*100:0,c=pl>=0?'up':'down';
+  foot.innerHTML=`<tr class="foot"><td colspan="3">Total <span class="mini">KWD, live FX</span></td>
+    <td>${money(ti,'KW')}</td><td>${money(tv,'KW')}</td>
+    <td class="${c}">${pl>=0?'+':''}${n(pct,1)}%<br><span class="mini ${c}">${pl>=0?'+':''}${money(pl,'KW')}</span></td><td></td></tr>`;
+}
+
+async function pull(){
+  try{
+    const r=await fetch(FEED+'?t='+Date.now());
+    if(r.ok) S=await r.json();
+  }catch(e){ S={status:{feed:'failed: unreachable'}}; }
+  try{
+    const r=await fetch(HISTF+'?t='+Date.now());
+    if(r.ok) HIST=await r.json();
+  }catch(e){}
+
+  // Seed fallback coefficients once, from the rates you reported, so a failed
+  // scrape still produces a sensible number instead of a dash.
+  if(!C.kAu&&S.usAu&&S.usdKwd){
+    const seed={kAu:['gold','KW',40.370],iAu:['gold','IN',14585.25],
+                kAg:['silver','KW',0.661211],iAg:['silver','IN',228.15]};
+    for(const k in seed){const[m,mk,v]=seed[k];const b=base(m,mk);if(b)C[k]=v/b;}
+    saveLocal();
+  }
+  renderTop();renderHold();fill();
+}
+function fill(){
+  const g=(m,mk)=>localPx(m,mk).v;
+  if(g('gold','KW')!=null)kAu.value=g('gold','KW').toFixed(3);
+  if(g('gold','IN')!=null)iAu.value=g('gold','IN').toFixed(2);
+  if(g('silver','KW')!=null)kAg.value=g('silver','KW').toFixed(6);
+  if(g('silver','IN')!=null)iAg.value=g('silver','IN').toFixed(2);
+}
+document.getElementById('cal').onclick=()=>{
+  const set=(id,m,mk,k)=>{const v=+document.getElementById(id).value;const b=base(m,mk);if(v&&b)C[k]=v/b;};
+  set('kAu','gold','KW','kAu');set('iAu','gold','IN','iAu');
+  set('kAg','silver','KW','kAg');set('iAg','silver','IN','iAg');
+  saveLocal();renderTop();renderHold();};
+document.getElementById('refresh').onclick=pull;
+document.getElementById('reset').onclick=()=>{
+  holdings=[{metal:'gold',market:'IN',qty:6.4359,perGram:15745},
+            {metal:'gold',market:'KW',qty:5,perGram:258.021/5},
+            {metal:'silver',market:'IN',qty:110,perGram:285}];
+  saveLocal();renderHold();};
+document.getElementById('add').onclick=()=>{
+  const q=+fQty.value,c=+fCost.value;if(!q||!c){fQty.focus();return;}
+  holdings.push({metal:fMetal.value,market:fMarket.value,qty:q,perGram:fMode.value==='total'?c/q:c});
+  fQty.value='';fCost.value='';saveLocal();renderHold();};
+
+renderTop();renderHold();pull();
+setInterval(pull,5*60*1000);
+</script>
+</body>
+</html>
