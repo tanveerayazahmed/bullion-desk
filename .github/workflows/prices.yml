@@ -1,0 +1,47 @@
+name: Update prices
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"     # every 30 minutes (GitHub runs these late sometimes)
+  workflow_dispatch:            # manual run from the Actions tab
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prices
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Playwright + Chromium
+        run: |
+          npm install playwright@1.49.1 --no-save
+          npx playwright install --with-deps chromium
+
+      - name: Fetch prices
+        run: node scripts/fetch-prices.mjs
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "prices-bot"
+          git config user.email "prices-bot@users.noreply.github.com"
+          git add docs/prices.json docs/history.json
+          if git diff --staged --quiet; then
+            echo "No change."
+          else
+            git commit -m "prices: $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
+  
