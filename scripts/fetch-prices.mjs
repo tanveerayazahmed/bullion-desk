@@ -95,9 +95,24 @@ function pickNearest(text, expected, lo, hi) {
   );
 }
 
-async function scrape(browser, { key, url, expected, settle }) {
+let lastError = "";
+
+// Retry wrapper — these timeouts are frequently transient (cold CDN, slow
+// render). Two attempts costs ~30s and converts most failures into successes.
+async function scrape(browser, opts) {
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    lastError = "";
+    const v = await scrapeOnce(browser, opts);
+    if (v != null) return v;
+    if (attempt === 1) await new Promise((r) => setTimeout(r, 4000));
+  }
+  mark(opts.key, `failed: ${lastError || "no number in plausible range"} (2 attempts)`);
+  return null;
+}
+
+async function scrapeOnce(browser, { key, url, expected, settle, tabs, perKilo }) {
   if (expected == null) {
-    mark(key, "skipped: no spot reference to validate against");
+    lastError = "no spot reference to validate against";
     return null;
   }
   const lo = expected * BAND_LO;
@@ -108,35 +123,75 @@ async function scrape(browser, { key, url, expected, settle }) {
       "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
   });
   try {
-    await page.goto(url, { waitUntil: "networkidle", timeout: 45000 });
+    // 'domcontentloaded' not 'networkidle': sites that poll for live prices, or
+    // run analytics beacons, never go network-quiet, so networkidle always times
+    // out even though the page rendered fine seconds earlier.
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
 
-    // Wait until a number in the plausible band actually appears on screen.
+    // Wait until a number in a plausible band appears on screen. When the page
+    // may quote per kilo, accept EITHER band — waiting only for the per-gram
+    // range on a per-kg page times out before we ever get to parse it.
+    const kLo = perKilo ? lo * 1000 : lo;
+    const kHi = perKilo ? hi * 1000 : hi;
     await page.waitForFunction(
-      ([l, h]) => {
+      ([l, h, kl, kh]) => {
         const t = document.body.innerText;
         if (t.includes("{{")) return false;            // template not rendered
         return (t.match(/[\d][\d,]*\.?\d*/g) || []).some((s) => {
           const n = parseFloat(s.replace(/,/g, ""));
-          return n >= l && n <= h;
+          return (n >= l && n <= h) || (n >= kl && n <= kh);
         });
       },
-      [lo, hi],
-      { timeout: 30000 }
+      [lo, hi, kLo, kHi],
+      { timeout: 45000 }
     );
 
     if (settle) await page.waitForTimeout(settle);
-    const text = await page.innerText("body");
-    const val = pickNearest(text, expected, lo, hi);
+    let text = await page.innerText("body");
+
+    // Some pages hide a metal behind a tab. If nothing landed in range, try
+    // clicking anything that looks like a switcher, then re-read.
+    const found = (t) =>
+      pickNearest(t, expected, lo, hi) != null ||
+      (perKilo && pickNearest(t, expected * 1000, kLo, kHi) != null);
+
+    if (!found(text) && tabs) {
+      for (const t of tabs) {
+        try {
+          const el = page.getByText(t, { exact: false }).first();
+          if (await el.count()) {
+            await el.click({ timeout: 5000 });
+            await page.waitForTimeout(2500);
+            text = await page.innerText("body");
+            if (found(text)) break;
+          }
+        } catch {}
+      }
+    }
+    let val = null;
+    let unitNote = "";
+
+    // Dar Al Sabaek quotes silver per kilogram (confirmed), so for sources
+    // flagged perKilo try the per-kg band first and divide back to grams.
+    // Fall through to per-gram in case the site ever changes its unit.
+    if (perKilo) {
+      const k = pickNearest(text, expected * 1000, kLo, kHi);
+      if (k != null) {
+        val = k / 1000;
+        unitNote = " [per-kg \u00f7 1000]";
+      }
+    }
+    if (val == null) val = pickNearest(text, expected, lo, hi);
 
     if (val == null) {
-      mark(key, "failed: no number in plausible range on rendered page");
+      lastError = "no number in plausible range on rendered page";
       return null;
     }
     const drift = ((val - expected) / expected) * 100;
-    mark(key, `ok (${drift >= 0 ? "+" : ""}${drift.toFixed(1)}% vs spot-implied)`);
+    mark(key, `ok (${drift >= 0 ? "+" : ""}${drift.toFixed(1)}% vs spot-implied)${unitNote}`);
     return val;
   } catch (e) {
-    mark(key, `failed: ${String(e.message).split("\n")[0].slice(0, 90)}`);
+    lastError = String(e.message).split("\n")[0].slice(0, 90);
     return null;
   } finally {
     await page.close().catch(() => {});
@@ -166,23 +221,28 @@ async function runScrapes() {
       key: "islamicly_gold",
       url: "https://www.islamicly.com/home/gold",
       expected: impliedInAu,
+      settle: 2000,
     });
     out.inAg = await scrape(browser, {
       key: "islamicly_silver",
       url: "https://www.islamicly.com/home/silver",
       expected: impliedInAg,
+      settle: 2000,
+      perKilo: true,
     });
     out.kwAu = await scrape(browser, {
       key: "daralsabaek_gold",
       url: "https://daralsabaek.com/",
       expected: impliedKwAu,
-      settle: 3000,
+      settle: 4000,
     });
     out.kwAg = await scrape(browser, {
       key: "daralsabaek_silver",
       url: "https://daralsabaek.com/",
       expected: impliedKwAg,
-      settle: 3000,
+      settle: 4000,
+      perKilo: true,
+      tabs: ["Silver", "silver", "\u0641\u0636\u0629"],
     });
   } finally {
     await browser.close().catch(() => {});
