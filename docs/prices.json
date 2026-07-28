@@ -1,21 +1,21 @@
 {
-  "updated": "2026-07-28T08:00:24.094Z",
+  "updated": "2026-07-28T10:40:51.816Z",
   "status": {
     "metals": "ok",
     "fx": "ok",
     "brent": "ok",
-    "islamicly_gold": "ok (+17.2% vs spot-implied)",
+    "islamicly_gold": "ok (+17.5% vs spot-implied)",
     "islamicly_silver": "ok (+27.8% vs spot-implied)",
-    "daralsabaek_gold": "ok (+1.0% vs spot-implied)",
+    "daralsabaek_gold": "ok (-0.2% vs spot-implied)",
     "daralsabaek_silver": "ok (+18.0% vs spot-implied) [per-kg ÷ 1000]"
   },
-  "usAu": 4048.399902,
-  "usAg": 57.597,
+  "usAu": 4023.199951,
+  "usAg": 57.307999,
   "usdInr": 95.938043,
   "usdKwd": 0.309929,
-  "oil": 86.68,
-  "inAu": 14633.41,
-  "inAg": 226.98,
-  "kwAu": 40.73,
-  "kwAg": 0.677162
+  "oil": 86.63,
+  "inAu": 14581.24,
+  "inAg": 225.92,
+  "kwAu": 40,
+  "kwAg": 0.673594
 }
