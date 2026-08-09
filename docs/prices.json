@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-09T21:56:32.879Z",
+  "updated": "2026-08-09T22:24:45.948Z",
   "status": {
     "metals": "ok",
     "fx": "ok",
@@ -9,13 +9,13 @@
     "daralsabaek_gold": "ok (+0.7% vs spot-implied)",
     "daralsabaek_silver": "ok (+14.8% vs spot-implied) [per-kg ÷ 1000]"
   },
-  "usAu": 4343.299805,
-  "usAg": 63.707001,
+  "usAu": 4340.700195,
+  "usAg": 63.696999,
   "usdInr": 95.249248,
   "usdKwd": 0.30877,
-  "oil": 83.55,
+  "oil": 84.62,
   "inAu": 15516.95,
   "inAg": 239.87,
-  "kwAu": 43.436,
-  "kwAg": 0.725904
+  "kwAu": 43.4,
+  "kwAg": 0.725699
 }
