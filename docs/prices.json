@@ -1,27 +1,21 @@
 {
-  "updated": "2026-08-13T03:37:19.234Z",
+  "updated": "2026-08-13T05:29:08.832Z",
   "status": {
-    "metals": "failed: fetch failed",
+    "metals": "ok",
     "fx": "ok",
     "brent": "ok",
-    "islamicly_gold": "failed: no spot reference to validate against (2 attempts)",
-    "islamicly_silver": "failed: no spot reference to validate against (2 attempts)",
-    "daralsabaek_gold": "failed: no spot reference to validate against (2 attempts)",
-    "daralsabaek_silver": "failed: no spot reference to validate against (2 attempts)",
-    "usAu_carried": "from 2026-08-13T01:15:49.512Z (2.4h old)",
-    "usAg_carried": "from 2026-08-13T01:15:49.512Z (2.4h old)",
-    "inAu_carried": "from 2026-08-13T01:15:49.512Z (2.4h old)",
-    "inAg_carried": "from 2026-08-13T01:15:49.512Z (2.4h old)",
-    "kwAu_carried": "from 2026-08-13T01:15:49.512Z (2.4h old)",
-    "kwAg_carried": "from 2026-08-13T01:15:49.512Z (2.4h old)"
+    "islamicly_gold": "ok (+16.9% vs spot-implied)",
+    "islamicly_silver": "ok (+22.6% vs spot-implied)",
+    "daralsabaek_gold": "ok (+0.3% vs spot-implied)",
+    "daralsabaek_silver": "ok (+13.0% vs spot-implied) [per-kg ÷ 1000]"
   },
-  "usAu": 4431.100098,
-  "usAg": 65.908997,
+  "usAu": 4407,
+  "usAg": 65.723999,
   "usdInr": 95.412039,
   "usdKwd": 0.308491,
-  "oil": 88.2,
-  "inAu": 15823.37,
-  "inAg": 247.25,
-  "kwAu": 44.12,
-  "kwAg": 0.7385130000000001
+  "oil": 88.93,
+  "inAu": 15809.98,
+  "inAg": 247.21,
+  "kwAu": 43.86,
+  "kwAg": 0.736377
 }
