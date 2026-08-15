@@ -1,19 +1,13 @@
 {
-  "updated": "2026-08-15T08:52:38.441Z",
+  "updated": "2026-08-15T09:18:35.664Z",
   "status": {
-    "metals": "failed: fetch failed",
+    "metals": "ok",
     "fx": "ok",
     "brent": "ok",
-    "islamicly_gold": "failed: no spot reference to validate against (2 attempts)",
-    "islamicly_silver": "failed: no spot reference to validate against (2 attempts)",
-    "daralsabaek_gold": "failed: no spot reference to validate against (2 attempts)",
-    "daralsabaek_silver": "failed: no spot reference to validate against (2 attempts)",
-    "usAu_carried": "from 2026-08-15T08:18:10.990Z (0.6h old)",
-    "usAg_carried": "from 2026-08-15T08:18:10.990Z (0.6h old)",
-    "inAu_carried": "from 2026-08-15T08:18:10.990Z (0.6h old)",
-    "inAg_carried": "from 2026-08-15T08:18:10.990Z (0.6h old)",
-    "kwAu_carried": "from 2026-08-15T08:18:10.990Z (0.6h old)",
-    "kwAg_carried": "from 2026-08-15T08:18:10.990Z (0.6h old)"
+    "islamicly_gold": "ok (+17.7% vs spot-implied)",
+    "islamicly_silver": "ok (+23.7% vs spot-implied)",
+    "daralsabaek_gold": "ok (+0.4% vs spot-implied)",
+    "daralsabaek_silver": "ok (+12.9% vs spot-implied) [per-kg ÷ 1000]"
   },
   "usAu": 4377.600098,
   "usAg": 64.827003,
