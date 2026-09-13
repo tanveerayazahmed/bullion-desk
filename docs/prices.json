@@ -1,15 +1,19 @@
 {
-  "updated": "2026-09-13T16:53:39.681Z",
+  "updated": "2026-09-13T19:09:34.266Z",
   "status": {
-    "metals": "ok",
+    "metals": "failed: fetch failed",
     "fx": "ok",
     "brent": "ok",
-    "islamicly_gold": "ok (+16.9% vs spot-implied)",
-    "islamicly_silver": "ok (+19.8% vs spot-implied)",
-    "daralsabaek_gold": "failed: page.waitForFunction: Timeout 45000ms exceeded. (2 attempts)",
-    "daralsabaek_silver": "failed: page.waitForFunction: Timeout 45000ms exceeded. (2 attempts)",
-    "kwAu_carried": "from 2026-09-13T12:59:51.400Z (4.0h old)",
-    "kwAg_carried": "from 2026-09-13T12:59:51.400Z (4.0h old)"
+    "islamicly_gold": "failed: no spot reference to validate against (2 attempts)",
+    "islamicly_silver": "failed: no spot reference to validate against (2 attempts)",
+    "daralsabaek_gold": "failed: no spot reference to validate against (2 attempts)",
+    "daralsabaek_silver": "failed: no spot reference to validate against (2 attempts)",
+    "usAu_carried": "from 2026-09-13T16:53:39.681Z (2.3h old)",
+    "usAg_carried": "from 2026-09-13T16:53:39.681Z (2.3h old)",
+    "inAu_carried": "from 2026-09-13T16:53:39.681Z (2.3h old)",
+    "inAg_carried": "from 2026-09-13T16:53:39.681Z (2.3h old)",
+    "kwAu_carried": "from 2026-09-13T16:53:39.681Z (2.3h old)",
+    "kwAg_carried": "from 2026-09-13T16:53:39.681Z (2.3h old)"
   },
   "usAu": 4349.700195,
   "usAg": 64.622002,
