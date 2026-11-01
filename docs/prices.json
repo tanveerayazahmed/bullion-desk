@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-01T08:29:28.910Z",
+  "updated": "2026-11-01T15:24:09.351Z",
   "status": {
     "metals": "failed: fetch failed",
     "fx": "ok",
@@ -8,12 +8,12 @@
     "islamicly_silver": "failed: no spot reference to validate against (2 attempts)",
     "daralsabaek_gold": "failed: no spot reference to validate against (2 attempts)",
     "daralsabaek_silver": "failed: no spot reference to validate against (2 attempts)",
-    "usAu_carried": "from 2026-11-01T01:43:43.731Z (6.8h old)",
-    "usAg_carried": "from 2026-11-01T01:43:43.731Z (6.8h old)",
-    "inAu_carried": "from 2026-11-01T01:43:43.731Z (6.8h old)",
-    "inAg_carried": "from 2026-11-01T01:43:43.731Z (6.8h old)",
-    "kwAu_carried": "from 2026-11-01T01:43:43.731Z (6.8h old)",
-    "kwAg_carried": "from 2026-11-01T01:43:43.731Z (6.8h old)"
+    "usAu_carried": "from 2026-11-01T08:29:28.910Z (6.9h old)",
+    "usAg_carried": "from 2026-11-01T08:29:28.910Z (6.9h old)",
+    "inAu_carried": "from 2026-11-01T08:29:28.910Z (6.9h old)",
+    "inAg_carried": "from 2026-11-01T08:29:28.910Z (6.9h old)",
+    "kwAu_carried": "from 2026-11-01T08:29:28.910Z (6.9h old)",
+    "kwAg_carried": "from 2026-11-01T08:29:28.910Z (6.9h old)"
   },
   "usAu": 3876.399902,
   "usAg": 49.254002,
