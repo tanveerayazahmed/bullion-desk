@@ -1,15 +1,19 @@
 {
-  "updated": "2026-11-22T12:44:59.358Z",
+  "updated": "2026-11-22T20:04:11.112Z",
   "status": {
-    "metals": "ok",
+    "metals": "failed: fetch failed",
     "fx": "ok",
     "brent": "ok",
-    "islamicly_gold": "failed: page.goto: net::ERR_CERT_DATE_INVALID at https://www.islamicly.com/home/gold (2 attempts)",
-    "islamicly_silver": "failed: page.goto: net::ERR_CERT_DATE_INVALID at https://www.islamicly.com/home/silver (2 attempts)",
-    "daralsabaek_gold": "ok (+1.9% vs spot-implied)",
-    "daralsabaek_silver": "ok (+17.8% vs spot-implied) [per-kg ÷ 1000]",
-    "inAu_carried": "from 2026-11-22T04:20:04.429Z (8.4h old)",
-    "inAg_carried": "from 2026-11-22T04:20:04.429Z (8.4h old)"
+    "islamicly_gold": "failed: no spot reference to validate against (2 attempts)",
+    "islamicly_silver": "failed: no spot reference to validate against (2 attempts)",
+    "daralsabaek_gold": "failed: no spot reference to validate against (2 attempts)",
+    "daralsabaek_silver": "failed: no spot reference to validate against (2 attempts)",
+    "usAu_carried": "from 2026-11-22T12:44:59.358Z (7.3h old)",
+    "usAg_carried": "from 2026-11-22T12:44:59.358Z (7.3h old)",
+    "inAu_carried": "from 2026-11-22T12:44:59.358Z (7.3h old)",
+    "inAg_carried": "from 2026-11-22T12:44:59.358Z (7.3h old)",
+    "kwAu_carried": "from 2026-11-22T12:44:59.358Z (7.3h old)",
+    "kwAg_carried": "from 2026-11-22T12:44:59.358Z (7.3h old)"
   },
   "usAu": 3539,
   "usAg": 41.080002,
